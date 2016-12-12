@@ -1,0 +1,32 @@
+{
+  "name": "xdeploy",
+  "version": "0.0.1",
+  "description": "a tool to push files to server",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aslinwang/xdeploy.git"
+  },
+  "keywords": [
+    "push",
+    "deploy"
+  ],
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "aslinwang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aslinwang/xdeploy/issues"
+  },
+  "bin": {
+    "xdeploy": "bin/xdeploy"
+  },
+  "main": "xdeploy.js",
+  "dependencies": {
+    "cmd-interface": "0.0.5",
+    "httpush": "^1.0.1",
+    "rd": "0.0.2"
+  },
+  "devDependencies": {
+  }
+}

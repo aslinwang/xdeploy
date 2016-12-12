@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+'use strict'
+var fs = require('fs');
+var path = require('path');
+var Cmd = require('cmd-interface');
+var projConf = require('../package.json');
+var rd = require('rd');
+var httpush = require('httpush');
+
+var cmd = new Cmd.Commander({
+  name : 'xdeploy'
+});
+
+function getConf(){
+  var conf = {};
+  try{
+    var root = path.resolve('./');
+    var dirs = path.resolve('./').split(path.sep);
+    var cur;
+    while(dirs.length > 1){//从当前目录向上寻找incre配置目录
+      cur = path.join(dirs.join(path.sep), '/xdeploy.json');
+      if(fs.existsSync(cur)){
+        var srvPath = root.replace(dirs.join(path.sep), '');
+        conf = require(cur);// deploy配置
+        conf.to = path.join(conf.to, srvPath);
+        conf.dir = path.resolve('./');
+        return conf;
+      }
+      dirs.pop();
+    }
+  }catch(e){
+    console.log('did not find xdeploy.json that contains config infos!');
+  }
+
+  return false;
+}
+
+function islegal(name, ignores){
+  for(var i = 0; i < ignores.length; i++){
+    if(name.indexOf(ignores[i]) != -1){
+      return false;
+    }
+  }
+  return true;
+}
+
+// 目标路径
+// console.log(file.getHashRelease()) --> /protected/config/wii_ui/aaa/config/chart-map.json
+// 文件内容
+// console.log(file.getContent()) --> 
+// 上传文件的文件名
+// console.log(file.subpath) --> /aaa/config/chart-map.json
+function getAllFiles(dir, to, ignores){
+  var files = [];
+  ignores = ['.svn', 'xdeploy'].concat(ignores);
+
+  rd.eachSync(dir, function(f, s){
+    if(s.isFile() && islegal(f, ignores)){
+      var file = {};
+      
+      file.subpath = f.replace(dir, '');
+
+      // console.log(file.subpath);
+
+      file.getHashRelease = function(){
+        return file.subpath;
+      }
+
+      file.getContent = function(){
+        var content = fs.readFileSync(f, {encoding : 'utf-8'});
+        return content;
+      }
+
+      files.push(file);
+    }
+  });
+
+
+  return files;
+}
+
+cmd.option({
+  cmd : '-a',
+  description : 'push local files to remote server',
+  handler : function(parse){
+    var conf = getConf();
+    // console.log(conf);
+
+    // getAllFiles(conf.dir, conf.to);
+
+    httpush({
+      receiver : conf.receiver,
+      to : conf.to
+    }, getAllFiles(conf.dir, conf.to));
+  }
+});
+
+cmd.version(projConf.version);
+cmd.run();

@@ -90,7 +90,8 @@ cmd.option({
 
     httpush({
       receiver : conf.receiver,
-      to : conf.to
+      to : conf.to,
+      retry : conf.retry || 2
     }, getAllFiles(conf.dir, conf.to));
   }
 });

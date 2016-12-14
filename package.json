@@ -1,6 +1,6 @@
 {
   "name": "xdeploy",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a tool to push files to server",
   "repository": {
     "type": "git",
@@ -25,7 +25,9 @@
   "dependencies": {
     "cmd-interface": "0.0.5",
     "httpush": "^1.0.4",
-    "rd": "0.0.2"
+    "rd": "0.0.2",
+    "iconv-lite": "0.2.10",
+    "gearjs": "0.0.12"
   },
   "devDependencies": {
   }

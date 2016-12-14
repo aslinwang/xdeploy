@@ -15,9 +15,11 @@ Usage
 {
   "receiver" : "http://deploy.city.qq.com/receiver.php",
   "to" : "/usr/local/qqcom_app/proj",
-  "retry" : 5
+  "retry" : 5,
+  "ignores" : ['.svn']
 }
 ```
-files will be pushed to `to`
+files will be pushed to `to`;
+the path contains any item of `ignores` array will be ignored
 * `xdeploy -a`
 start to push

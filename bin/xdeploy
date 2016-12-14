@@ -3,6 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 var Cmd = require('cmd-interface');
+var _ = require('gearjs').util;
 var projConf = require('../package.json');
 var rd = require('rd');
 var httpush = require('httpush');
@@ -50,15 +51,15 @@ function islegal(name, ignores){
 // console.log(file.getContent()) --> 
 // 上传文件的文件名
 // console.log(file.subpath) --> /aaa/config/chart-map.json
-function getAllFiles(dir, to, ignores){
+function getAllFiles(conf){
   var files = [];
-  ignores = ['.svn', 'xdeploy'].concat(ignores);
+  var ignores = ['.svn', 'xdeploy', '.DS_Store'].concat(conf.ignores);
 
-  rd.eachSync(dir, function(f, s){
+  rd.eachSync(conf.dir, function(f, s){
     if(s.isFile() && islegal(f, ignores)){
       var file = {};
       
-      file.subpath = f.replace(dir, '');
+      file.subpath = f.replace(conf.dir, '');
 
       // console.log(file.subpath);
 
@@ -67,7 +68,17 @@ function getAllFiles(dir, to, ignores){
       }
 
       file.getContent = function(){
-        var content = fs.readFileSync(f, {encoding : 'utf-8'});
+        var content = fs.readFileSync(f);
+        if(_.isUtf8(content)){
+          content = content.toString('utf8');
+          if (content.charCodeAt(0) === 0xFEFF) {
+            content = content.substring(1);
+          }
+        }
+        // else{// 使用默认字符集读取文件流，否则会更改文件格式，导致文件不可读
+        //   content = getIconv().decode(content, 'gbk');
+        // }
+        // console.log(new Buffer.from(content));
         return content;
       }
 
@@ -92,7 +103,7 @@ cmd.option({
       receiver : conf.receiver,
       to : conf.to,
       retry : conf.retry || 2
-    }, getAllFiles(conf.dir, conf.to));
+    }, getAllFiles(conf));
   }
 });
 

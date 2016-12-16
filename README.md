@@ -23,3 +23,11 @@ files will be pushed to `to`;
 the path contains any item of `ignores` array will be ignored
 * `xdeploy -a`
 start to push
+
+
+Default ignore string list
+-----
+* `.svn`
+* `xdeploy`
+* `.DS_Store`
+* `.git`

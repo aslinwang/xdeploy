@@ -53,7 +53,7 @@ function islegal(name, ignores){
 // console.log(file.subpath) --> /aaa/config/chart-map.json
 function getAllFiles(conf){
   var files = [];
-  var ignores = ['.svn', 'xdeploy', '.DS_Store'].concat(conf.ignores);
+  var ignores = ['.svn', 'xdeploy', '.DS_Store', '.git'].concat(conf.ignores);
 
   rd.eachSync(conf.dir, function(f, s){
     if(s.isFile() && islegal(f, ignores)){
